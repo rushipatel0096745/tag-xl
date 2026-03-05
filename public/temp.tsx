@@ -215,3 +215,291 @@ const CompanyPage = () => {
 };
 
 export default CompanyPage;
+
+// <div className="bg-white rounded-xl shadow p-6">
+        //   <h2 className="text-xl font-semibold mb-6">Add Role</h2>
+
+        //   <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+
+        //     {/* Role Name */}
+        //     <div>
+        //       <label className="font-medium">
+        //         Name <span className="text-red-500">*</span>
+        //       </label>
+
+        //       <input
+        //         {...register("name", { required: true })}
+        //         className="w-full border rounded-md px-3 py-2 mt-2"
+        //       />
+        //     </div>
+
+        //     {/* Permissions */}
+        //     <div>
+        //       <h3 className="font-semibold mb-4">Select Permissions</h3>
+
+        //       <div className="space-y-4">
+        //         {permissionGroups.map((group) => {
+        //           const checked = isGroupChecked(group.key, group.actions);
+        //           const indeterminate = isGroupIndeterminate(
+        //             group.key,
+        //             group.actions
+        //           );
+
+        //           return (
+        //             <div key={group.key} className="border rounded-md p-4">
+
+        //               {/* Group Header */}
+        //               <div className="flex items-center gap-3">
+
+        //                 {/* Expand Button */}
+        //                 <button
+        //                   type="button"
+        //                   onClick={() => toggleExpand(group.key)}
+        //                   className="text-red-500 font-bold"
+        //                 >
+        //                   {expanded[group.key] ? "-" : "+"}
+        //                 </button>
+
+        //                 {/* Parent Checkbox */}
+        //                 <input
+        //                   type="checkbox"
+        //                   checked={checked}
+        //                   ref={(el) => {
+        //                     if (el) el.indeterminate = indeterminate;
+        //                   }}
+        //                   onChange={(e) =>
+        //                     toggleGroup(group.key, group.actions, e.target.checked)
+        //                   }
+        //                 />
+
+        //                 <span className="font-medium">{group.name}</span>
+        //               </div>
+
+        //               {/* Children Permissions */}
+        //               {expanded[group.key] && (
+        //                 <div className="grid grid-cols-4 gap-6 mt-4 ml-6">
+        //                   {group.actions.map((action) => {
+        //                     const key = `${group.key}_${action}`;
+
+        //                     return (
+        //                       <label
+        //                         key={key}
+        //                         className="flex items-center gap-2"
+        //                       >
+        //                         <input
+        //                           type="checkbox"
+        //                           {...register(`permissions.${key}`)}
+        //                         />
+        //                         {action.charAt(0).toUpperCase() + action.slice(1)}
+        //                       </label>
+        //                     );
+        //                   })}
+        //                 </div>
+        //               )}
+        //             </div>
+        //           );
+        //         })}
+        //       </div>
+        //     </div>
+
+        //     {/* Buttons */}
+        //     <div className="flex justify-end gap-3">
+        //       <button
+        //         type="button"
+        //         className="border px-4 py-2 rounded-md"
+        //       >
+        //         Back
+        //       </button>
+
+        //       <button
+        //         type="submit"
+        //         className="bg-green-600 text-white px-4 py-2 rounded-md"
+        //       >
+        //         Save
+        //       </button>
+        //     </div>
+        //   </form>
+        // </div>
+    // );
+// }
+
+// "use client";
+
+// import { useEffect, useState } from "react";
+// import { useForm } from "react-hook-form";
+// // import { permissionGroups } from "@/lib/permissions";
+
+// export const permissionGroups = [
+//   {
+//     name: "Manage User",
+//     key: "user",
+//     actions: ["list", "create", "update", "delete"],
+//   },
+//   {
+//     name: "Manage Role",
+//     key: "role",
+//     actions: ["list", "create", "update", "delete"],
+//   },
+//   {
+//     name: "Manage Company",
+//     key: "company",
+//     actions: ["list", "create", "update", "delete", "login to company"],
+//   },
+// ];
+
+// type RoleData = {
+//   name: string;
+//   permissions: string[];
+// };
+
+// type FormValues = {
+//   name: string;
+//   permissions: Record<string, boolean>;
+// };
+
+// export default function RoleForm({ initialData }: { initialData?: RoleData }) {
+//   const { register, handleSubmit, setValue, watch } = useForm<FormValues>({
+//     defaultValues: {
+//       name: "",
+//       permissions: {},
+//     },
+//   });
+
+//   const permissions = watch("permissions") || {};
+
+//   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+//   // Prefill form for edit
+//   useEffect(() => {
+//     if (!initialData) return;
+
+//     setValue("name", initialData.name);
+
+//     initialData.permissions.forEach((permission) => {
+//       setValue(`permissions.${permission}`, true);
+//     });
+//   }, [initialData, setValue]);
+
+//   const toggleExpand = (key: string) => {
+//     setExpanded((prev) => ({
+//       ...prev,
+//       [key]: !prev[key],
+//     }));
+//   };
+
+//   const toggleGroup = (
+//     groupKey: string,
+//     actions: string[],
+//     checked: boolean,
+//   ) => {
+//     actions.forEach((action) => {
+//       setValue(`permissions.${groupKey}_${action}`, checked);
+//     });
+//   };
+
+//   const onSubmit = (data: FormValues) => {
+//     const selectedPermissions = Object.keys(data.permissions).filter(
+//       (key) => data.permissions[key],
+//     );
+
+//     const payload = {
+//       name: data.name,
+//       permissions: selectedPermissions,
+//     };
+
+//     console.log(payload);
+//   };
+
+//   return (
+//     <div className="bg-white rounded-xl shadow p-6">
+//       <h2 className="text-xl font-semibold mb-6">
+//         {initialData ? "Edit Role" : "Add Role"}
+//       </h2>
+
+//       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+//         {/* Name */}
+//         <div>
+//           <label className="font-medium">
+//             Name <span className="text-red-500">*</span>
+//           </label>
+
+//           <input
+//             {...register("name", { required: true })}
+//             className="w-full border rounded-md px-3 py-2 mt-2"
+//           />
+//         </div>
+
+//         {/* Permissions */}
+//         {permissionGroups.map((group) => {
+//           const checked = group.actions.every(
+//             (action) => permissions[`${group.key}_${action}`],
+//           );
+
+//           const someChecked =
+//             group.actions.some(
+//               (action) => permissions[`${group.key}_${action}`],
+//             ) && !checked;
+
+//           return (
+//             <div key={group.key} className="border rounded-md p-4">
+//               {/* Group Header */}
+//               <div className="flex items-center gap-3">
+//                 {/* Expand Button */}
+//                 <button
+//                   type="button"
+//                   onClick={() => toggleExpand(group.key)}
+//                   className="text-red-500 font-bold"
+//                 >
+//                   {expanded[group.key] ? "-" : "+"}
+//                 </button>
+
+//                 {/* Parent Select All Checkbox */}
+//                 <input
+//                   type="checkbox"
+//                   checked={checked}
+//                   ref={(el) => {
+//                     if (el) el.indeterminate = someChecked;
+//                   }}
+//                   onChange={(e) =>
+//                     toggleGroup(group.key, group.actions, e.target.checked)
+//                   }
+//                 />
+
+//                 <span className="font-medium">{group.name}</span>
+//               </div>
+
+//               {/* Child Permissions */}
+//               {expanded[group.key] && (
+//                 <div className="grid grid-cols-4 gap-6 mt-4 ml-6">
+//                   {group.actions.map((action) => {
+//                     const key = `${group.key}_${action}`;
+
+//                     return (
+//                       <label key={key} className="flex items-center gap-2">
+//                         <input
+//                           type="checkbox"
+//                           {...register(`permissions.${key}`)}
+//                         />
+//                         {action.charAt(0).toUpperCase() + action.slice(1)}
+//                       </label>
+//                     );
+//                   })}
+//                 </div>
+//               )}
+//             </div>
+//           );
+//         })}
+
+//         {/* Buttons */}
+//         <div className="flex justify-end gap-3">
+//           <button
+//             type="submit"
+//             className="bg-green-600 text-white px-4 py-2 rounded-md"
+//           >
+//             Save
+//           </button>
+//         </div>
+//       </form>
+//     </div>
+//   );
+// }

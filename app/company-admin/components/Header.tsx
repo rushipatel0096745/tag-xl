@@ -1,10 +1,12 @@
+import { getCompanyUserData } from "@/app/services/company-admin/getComapnyData";
 import { logout } from "@/app/services/super-admin/auth";
 import { getUserData } from "@/app/services/super-admin/companyList";
 import React from "react";
 
 const Header = async() => {
 
-    const user = await getUserData();
+    const user = await getCompanyUserData();
+    // const user = await getUserData()
     const fullName = user?.firstname + ' ' + user?.lastname
 
     return (
@@ -22,6 +24,7 @@ const Header = async() => {
                         </img>
                 </div>
                 <div className="profile-name">
+                    {/* Super Admin */}
                     {fullName}
                     <div className="inline ml-2">
                         <button className="border rounded-xl p-2 cursor-pointer" onClick={logout}>Logout</button>
