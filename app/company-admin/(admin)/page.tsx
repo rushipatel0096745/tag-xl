@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import CompanyDashboard from "../components/CompanyDashboard";
 import { getComapnyData, getCompanySessionId } from "@/app/services/company-admin/getComapnyData";
 
-type DashboardData = {
+export type DashboardData = {
     has_error: boolean | null;
     message: string;
     total_assets: number;
@@ -45,13 +45,13 @@ const CompanyDashboardPage = async () => {
 
         if (!dashboardRes.ok) {
             console.error("Failed to fetch dashboard:", dashboardRes.status, dashboardRes.statusText);
-            dashboardData = { has_error: true, status: dashboardRes.status };
+            // dashboardData = { has_error: true, message: dashboardRes.message };
         } else {
             dashboardData = await dashboardRes.json();
         }
     } catch (err) {
         console.error("Error fetching dashboard:", err);
-        dashboardData = { has_error: true, error: String(err) };
+        // dashboardData = { has_error: true, error: String(err) };
     }
 
     const dashboardArr = Object.entries(dashboardData)
@@ -69,7 +69,7 @@ const CompanyDashboardPage = async () => {
     return (
         <div>
             <Suspense fallback={<p className='text-2xl'>Loading....</p>}>
-                <CompanyDashboard initialData={dataArr} />
+                <CompanyDashboard initialData={dashboardData} />
             </Suspense>
         </div>
     );

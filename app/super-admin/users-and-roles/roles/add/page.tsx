@@ -1,13 +1,13 @@
+import { createRole } from '@/app/services/super-admin/roleList';
 import RoleForm from '@/app/super-admin/components/RoleForm';
-// import RoleForm2 from '@/app/super-admin/components/RoleForm';
 import React from 'react'
 
-const page = () => {
+const RoleAddPage = () => {
   return (
     <div>
-      <RoleForm/>
+      <RoleForm action={createRole}/>
     </div>
   )
 }
 
-export default page
+export default RoleAddPage

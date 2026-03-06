@@ -51,86 +51,94 @@ export const createRole = async function (prevState: null, formData: any) {
     const sessionId = await getSessionId();
 
     if (sessionId) {
-        try {
-            const response = await fetch("role url", {
-                method: "POST",
-                headers: {
-                    "X-Session-ID": sessionId,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    formData,
-                }),
-            });
+        console.log("data to be posted: ", formData);
+        return {
+            success: true,
+            error: "",
+            data: "",
+        };
+        // try {
+        //     const response = await fetch("role url", {
+        //         method: "POST",
+        //         headers: {
+        //             "X-Session-ID": sessionId,
+        //             "Content-Type": "application/json",
+        //         },
+        //         body: JSON.stringify({
+        //             formData,
+        //         }),
+        //     });
 
-            const result = await response.json();
+        //     const result = await response.json();
 
-            if (result.has_error) {
-                return {
-                    success: false,
-                    error: "Unable to create User",
-                    data: "",
-                };
-            }
-            console.log(result);
-            return {
-                success: true,
-                error: "",
-                data: result.user_id,
-            };
-        } catch (error) {
-            console.log("error: ", error);
-            return {
-                success: false,
-                error: "Failed to connect to the server",
-                data: "",
-            };
-        }
+        //     if (result.has_error) {
+        //         return {
+        //             success: false,
+        //             error: "Unable to create User",
+        //             data: "",
+        //         };
+        //     }
+        //     console.log(result);
+        //     return {
+        //         success: true,
+        //         error: "",
+        //         data: result.user_id,
+        //     };
+        // } catch (error) {
+        //     console.log("error: ", error);
+        //     return {
+        //         success: false,
+        //         error: "Failed to connect to the server",
+        //         data: "",
+        //     };
+        // }
     }
 };
 
-export const updateRole = async (id: number, data: any) => {
+export const updateRole = async (id: number, prevState:any, data: any) => {
     const sessionId = await getSessionId();
 
     if (sessionId) {
-        try {
-            const response = await fetch("https://tagxl.com/api/super-user/role/update/" + id, {
-                method: "PUT",
-                headers: {
-                    "X-Session-ID": sessionId,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    role_name: data.name,
-                    description: data.description || null,
-                    permission: data.permissions,
-                }),
-            });
-            console.log("update action called");
+        console.log("data to be posted: ", data);
 
-            const result = await response.json();
+        // try {
+        //     const response = await fetch("https://tagxl.com/api/super-user/role/update/" + id, {
+        //         method: "PUT",
+        //         headers: {
+        //             "X-Session-ID": sessionId,
+        //             "Content-Type": "application/json",
+        //         },
+        //         body: JSON.stringify({
+        //             role_name: data.name,
+        //             description: data.description || null,
+        //             permission: data.permissions,
+        //         }),
+        //     });
+        //     console.log("update action called");
 
-            if (result.has_error) {
-                console.log(result);
-                return {
-                    success: false,
-                    error: "Unable to Update User",
-                    data: "",
-                };
-            }
-            console.log(result);
-            return {
-                success: true,
-                error: "",
-                data: result.user_id,
-            };
-        } catch (error) {
-            console.log("error: ", error);
-            return {
-                success: false,
-                error: "Failed to connect to the server",
-                data: "",
-            };
-        }
+        //     const result = await response.json();
+
+        //     if (result.has_error) {
+        //         console.log(result);
+        //         return {
+        //             success: false,
+        //             error: "Unable to Update User",
+        //             data: "",
+        //         };
+        //     }
+        //     console.log(result);
+        //     return {
+        //         success: true,
+        //         error: "",
+        //         data: result.user_id,
+        //     };
+        // } catch (error) {
+        //     console.log("error: ", error);
+        //     return {
+        //         success: false,
+        //         error: "Failed to connect to the server",
+        //         data: "",
+        //     };
+        // }
     }
 };

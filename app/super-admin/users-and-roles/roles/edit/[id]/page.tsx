@@ -1,5 +1,4 @@
 import { getRole, updateRole } from "@/app/services/super-admin/roleList";
-// import RoleForm from "../../../../components/RoleForm";
 import RoleForm from '@/app/super-admin/components/RoleForm';
 import React from "react";
 
@@ -28,22 +27,28 @@ interface RoleFormValues {
   permission: Record<string, string[]>;
 }
 
-const RoleEdit = async ({ params }: { params: { id: string } }) => {
-  const role: Role = await getRole(Number(params.id));
+const RoleEdit = async ({ params }: { params: Promise<{ id: string }> }) => {
+
+  const {id} = await params
+
+  const role: RoleResponse = await getRole(Number(id));
 
   console.log(role)
 
   const defaultValues: RoleFormValues = {
-    role_name: role.role_name,
-    description: role.description ?? "",
-    permission: role.permission ?? {},
+    role_name: role.role.role_name,
+    description: role.role.description ?? "",
+    permission: role.role.permission ?? {},
   };
+
+  console.log("default values: ", defaultValues);
 
   return (
     
         <RoleForm
           defaultValues={defaultValues}
-          onSubmit={updateRole.bind(null, role.id)}
+          action={updateRole} 
+          roleId={Number(id)}
         />
  
   
