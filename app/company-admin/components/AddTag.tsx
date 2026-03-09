@@ -2,7 +2,7 @@
 
 import React, { startTransition, useActionState, useState } from "react";
 
-type TagType = "rfid" | "qr" | "manual" | "";
+type TagType = "RFID" | "QR" | "Manual" | "";
 
 interface TagItem {
     tag_type: TagType;
@@ -60,9 +60,9 @@ const AddTag = ({ action }) => {
     };
 
     const tagTypeOptions: { label: string; value: TagType }[] = [
-        { label: "RFID", value: "rfid" },
-        { label: "QR", value: "qr" },
-        { label: "Manual", value: "manual" },
+        { label: "RFID", value: "RFID" },
+        { label: "QR", value: "QR" },
+        { label: "Manual", value: "Manual" },
     ];
 
     return (

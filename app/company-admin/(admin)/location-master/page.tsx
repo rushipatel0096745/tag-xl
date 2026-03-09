@@ -1,17 +1,23 @@
-import Filter from "@/app/company-admin/components/Filter";
-import TagList from "@/app/company-admin/components/TagList";
-import { getAllTagList } from "@/app/services/company-admin/tags";
 import React, { Suspense } from "react";
+import Filter from "../../components/Filter";
+import LocationList from "../../components/LocationList";
+import { getAllLocations } from "@/app/services/company-admin/location";
 
-const ManageTagsPage = async () => {
-    const tagList = await getAllTagList();
-    // console.log(tagList)
+export interface Location {
+    id: number
+    name: string
+}
+
+const LocationMasterPage = async () => {
+    const locationList: Location[] = await getAllLocations();
+
+    // console.log(locationList)
 
     return (
         <div className='main w-[calc(100%] min-h-[calc(100vh_-_60px)] text-[#111c43] mt-[60px] p-5.5 '>
             <div className='page-content'>
                 <div className='page-head mb-6'>
-                    <h2 className='text-[20px] leading-6.5 font-semibold'>Tag List</h2>
+                    <h2 className='text-[20px] leading-6.5 font-semibold'>Location Master</h2>
                 </div>
                 <div className='page-body'>
                     {/* filter */}
@@ -19,7 +25,7 @@ const ManageTagsPage = async () => {
 
                     {/* asset list */}
                     <Suspense fallback={<p>Loading....</p>}>
-                        <TagList tagList={tagList} />
+                        <LocationList locationList={locationList} />
                     </Suspense>
                 </div>
             </div>
@@ -27,4 +33,4 @@ const ManageTagsPage = async () => {
     );
 };
 
-export default ManageTagsPage;
+export default LocationMasterPage;
