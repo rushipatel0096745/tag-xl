@@ -2,30 +2,67 @@
 
 import Link from "next/link";
 import React, { startTransition, useActionState, useState } from "react";
+import { Location } from "../(admin)/location-master/page";
 
-const LocationForm = ({ action }) => {
-    const [location, setLocation] = useState("");
+type ActionState = {
+    success: boolean | null;
+    error: string;
+    data: string;
+};
+
+type LocationFormAction = (id: number, prevState: any, formData: any) => Promise<void>;
+
+type BoundAction = (prevState: ActionState, payload: { name: string }) => Promise<ActionState>;
+
+const LocationForm = ({
+    action,
+    initialData,
+    locationId,
+}: {
+    action: LocationFormAction;
+    initialData: Location;
+    locationId: number;
+}) => {
+    // console.log(initialData)
+    const boundAction = locationId
+        ? (action.bind(null, locationId) as unknown as BoundAction)
+        : (action as unknown as BoundAction);
+
+    const [location, setLocation] = useState(locationId ? initialData.name : "");
 
     const [showMsg, setShowMsg] = useState("");
 
-    const [state, formAction, isPending] = useActionState(action, { success: null, error: "", data: "" });
+    const [error, setError] = useState("");
+
+    const [state, formAction, isPending] = useActionState<ActionState, { name: string }>(boundAction, {
+        success: null,
+        error: "",
+        data: "",
+    });
 
     function handleSubmit() {
         if (!location) {
-            setShowMsg("Please enter the location value");
+            setError("Please enter the location value");
+            return;
         }
         startTransition(() => formAction({ name: location }));
+        if (!locationId) {
+            setLocation("");
+        }
+        setShowMsg("Location successfully updated");
     }
 
     return (
         <div className='card-box bg-white rounded-[18px]'>
-            <div className='card-box_head border-0 min-h-[84px] pt-5.5 px-5.5 pb-6 flex justify-between items-center'>
-                <h3 className='title h3 text-[18px] font-semibold leading-6'>Add Location</h3>
+            <div className='card-box_head border-0 min-h-21 pt-5.5 px-5.5 pb-6 flex justify-between items-center'>
+                <h3 className='title h3 text-[18px] font-semibold leading-6'>
+                    {locationId ? "Edit Location" : "Add Location"}
+                </h3>
                 <div className='actions-btn flex gap-2 items-center'>
                     <Link
-                        className='icon-text-button default all-unset cursor-pointer bg-[#fff] border border-[#845adf26] rounded-full items-center pt-[4px] pr-[12px] pb-[4px] pl-[4px] text-[14px] font-medium transition-colors duration-200 inline-flex'
+                        className='icon-text-button default all-unset cursor-pointer bg-white border border-[#845adf26] rounded-full items-center pt-1 pr-3 pb-1 pl-1 text-[14px] font-medium transition-colors duration-200 inline-flex'
                         href='/company-admin/location-master'>
-                        <span className='icon-circle bg-[#845adf26] rounded-[50px] justify-center items-center w-[28px] h-[28px] flex'>
+                        <span className='icon-circle bg-[#845adf26] rounded-[50px] justify-center items-center w-7 h-7 flex'>
                             <svg
                                 xmlns='http://www.w3.org/2000/svg'
                                 width={20}
@@ -40,13 +77,13 @@ const LocationForm = ({ action }) => {
                                 />
                             </svg>
                         </span>
-                        <span className='button-label text-[#1a1a1a] capitalize ml-[8px]'>Back</span>
+                        <span className='button-label text-[#1a1a1a] capitalize ml-2'>Back</span>
                     </Link>
                     <button
                         onClick={handleSubmit}
-                        className='icon-text-button secondary all-unset cursor-pointer bg-[#fff] border border-[#845adf26] rounded-full items-center pt-[4px] pr-[12px] pb-[4px] pl-[4px] text-[14px] font-medium transition-colors duration-200 inline-flex'
+                        className='icon-text-button secondary all-unset cursor-pointer bg-white border border-[#845adf26] rounded-full items-center pt-1 pr-3 pb-1 pl-1 text-[14px] font-medium transition-colors duration-200 inline-flex'
                         type='button'>
-                        <span className='icon-circle bg-[#845adf26] rounded-[50px] justify-center items-center w-[28px] h-[28px] flex'>
+                        <span className='icon-circle bg-[#845adf26] rounded-[50px] justify-center items-center w-7 h-7 flex'>
                             <svg
                                 xmlns='http://www.w3.org/2000/svg'
                                 width={20}
@@ -59,11 +96,23 @@ const LocationForm = ({ action }) => {
                                 />
                             </svg>
                         </span>
-                        <span className='button-label text-[#1a1a1a] capitalize ml-[8px]'>Save</span>
+                        <span className='button-label text-[#1a1a1a] capitalize ml-2'>Save</span>
                     </button>
                 </div>
             </div>
             <div className='card-box_body pt-0 px-5.5 pl-22px'>
+                {state?.error ||
+                    (error && (
+                        <div className='text-red-500'>
+                            <p>{state?.error || error}</p>
+                        </div>
+                    ))}
+
+                {showMsg && (
+                    <div className='text-green-700'>
+                        <p>{showMsg}</p>
+                    </div>
+                )}
                 <form>
                     <div className='row form-row flex wrap gap-4 w-full pb-12'>
                         <div className='col w-full'>
@@ -72,14 +121,18 @@ const LocationForm = ({ action }) => {
                                     id='name'
                                     placeholder=''
                                     type='text'
-                                    defaultValue=''
+                                    // defaultValue=''
+                                    value={location}
                                     name='location_name'
-                                    onChange={(e) => setLocation(e.target.value)}
-                                    className='peer w-full h-[44px] border border-[#efefef] rounded-[10px] px-[14px] pt-[18px] pb-[8px]'
+                                    onChange={(e) => {
+                                        setError("");
+                                        setLocation(e.target.value);
+                                    }}
+                                    className='peer w-full h-11 border border-[#efefef] rounded-[10px] px-3.5 pt-4.5 pb-2'
                                 />
                                 <label
                                     htmlFor='name'
-                                    className=' absolute left-[12px] top-1/2 -translate-y-1/2 pointer-events-none bg-transparent px-[2px] text-[14px] text-[#676767] transition-all duration-200
+                                    className=' absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none bg-transparent px-0.5 text-[14px] text-[#676767] transition-all duration-200
                                                 peer-placeholder-shown:text-[14px] peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
                                                 peer-focus:top-2 peer-focus:text-[10px]'>
                                     Location Name<span className='require ml-px text-red-600 inline-block'>*</span>
