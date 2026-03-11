@@ -1,11 +1,74 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface Props {
     next: () => void;
     prev: () => void;
+    updateForm: (name: string, value: any) => void;
+    validate: () => boolean;
+    errors: any;
+    formData: any;
 }
 
-const Step3 = ({ next, prev }: Props) => {
+const Step3 = ({ next, prev, updateForm, formData, validate, errors }: Props) => {
+    function handleSave() {
+        if (!validate()) {
+            return;
+        } else {
+            next();
+        }
+    }
+
+    const SELECT_TRIGGER = "CUSTOM";
+
+    const [selectOption, setSelectOption] = useState<string>();
+
+    function handleSelectChange(e) {
+        if (!formData.third_party_start_date) return;
+        const value = e.target.value;
+
+        if (value === "") {
+            return;
+        }
+
+        setSelectOption(value);
+
+        if (value !== SELECT_TRIGGER) {
+            const startDate = new Date(formData.third_party_start_date);
+            const newDate = new Date(startDate);
+
+            newDate.setMonth(startDate.getMonth() + Number(value));
+
+            const newFormattedDate = newDate.toISOString().split("T")[0];
+
+            console.log("start date:", formData.third_party_start_date);
+            console.log("new date:", newFormattedDate);
+
+            updateForm("third_party_expiry_date", newFormattedDate);
+        }
+    }
+
+    // function handleSelectChange(e) {
+    //     const value = e.target.value;
+
+    //     if (value == "") {
+    //         return;
+    //     }
+
+    //     setSelectOption(value);
+
+    //     if (value !== SELECT_TRIGGER) {
+    //         const date = new Date(formData.third_party_start_date);
+    //         const newDate = new Date();
+    //         newDate.setDate(date.getMonth() + value);
+    //         const newFormattedDate = newDate.toISOString().split("T")[0];
+
+    //         console.log("start date: ", formData.third_party_start_date);
+    //         console.log("new date: ", newFormattedDate);
+
+    //         updateForm("third_party_expiry_date", newFormattedDate);
+    //     }
+    // }
+
     return (
         <form action='' method='POST' className='block'>
             <div className='card-box-inner border-3 border-solid border-[#f5f6fa] rounded-3xl p-5.5'>
@@ -30,6 +93,7 @@ const Step3 = ({ next, prev }: Props) => {
                                             id='oem_certificate'
                                             type='file'
                                             name='oem_certificate'
+                                            onChange={(e) => updateForm("oem_certificate", e.target.files[0])}
                                         />
                                         <div className='upload-icon bg-[#d7e0f9] rounded-[6px] justify-center items-center w-[40px] h-[40px] transition-colors duration-200 flex'>
                                             <svg
@@ -52,28 +116,36 @@ const Step3 = ({ next, prev }: Props) => {
                                             Upload
                                         </button>
                                     </div>
+                                    {errors?.oem_certificate && (
+                                        <div className='text-red-600'>
+                                            <p>{errors.oem_certificate}</p>
+                                        </div>
+                                    )}
                                 </div>
-                                <div className='upload-block-content flex flex-col w-full gap-2.5 '>
-                                    <div className='upload-file-block flex gap-1 items-center'>
-                                        <svg
-                                            xmlns='http://www.w3.org/2000/svg'
-                                            width={24}
-                                            height={24}
-                                            className='h-5 w-5'
-                                            viewBox='0 0 24 24'
-                                            fill='none'>
-                                            <path
-                                                d='M3 20V4C3 3.20435 3.3163 2.44152 3.87891 1.87891C4.44152 1.3163 5.20435 1 6 1H14.5C14.7652 1 15.0195 1.10543 15.207 1.29297L20.707 6.79297C20.8946 6.9805 21 7.23478 21 7.5V20C21 20.7957 20.6837 21.5585 20.1211 22.1211C19.5585 22.6837 18.7957 23 18 23H6C5.20435 23 4.44152 22.6837 3.87891 22.1211C3.3163 21.5585 3 20.7957 3 20ZM16 16C16.5523 16 17 16.4477 17 17C17 17.5523 16.5523 18 16 18H8C7.44772 18 7 17.5523 7 17C7 16.4477 7.44772 16 8 16H16ZM16 12C16.5523 12 17 12.4477 17 13C17 13.5523 16.5523 14 16 14H8C7.44772 14 7 13.5523 7 13C7 12.4477 7.44772 12 8 12H16ZM10 8C10.5523 8 11 8.44772 11 9C11 9.55228 10.5523 10 10 10H8C7.44772 10 7 9.55228 7 9C7 8.44772 7.44772 8 8 8H10ZM15 7H18.0859L15 3.91406V7ZM5 20C5 20.2652 5.10543 20.5195 5.29297 20.707C5.48051 20.8946 5.73478 21 6 21H18C18.2652 21 18.5195 20.8946 18.707 20.707C18.8946 20.5195 19 20.2652 19 20V9H14C13.4477 9 13 8.55228 13 8V3H6C5.73478 3 5.4805 3.10543 5.29297 3.29297C5.10543 3.4805 5 3.73478 5 4V20Z'
-                                                fill='#454B54'
-                                            />
-                                        </svg>
-                                        <div className='upload-file-name-wrapper flex gap-1 items-center'>
-                                            <span className='upload-file-name underline underline-offset-[3px] decoration-[#111c43] text-[#454b54] text-[12px] leading-[16px]'>
-                                                oem-certificate_20260224_105033_FAEE2258.png
-                                            </span>
+                                {formData.oem_certificate && (
+                                    <div className='upload-block-content flex flex-col w-full gap-2.5 '>
+                                        <div className='upload-file-block flex gap-1 items-center'>
+                                            <svg
+                                                xmlns='http://www.w3.org/2000/svg'
+                                                width={24}
+                                                height={24}
+                                                className='h-5 w-5'
+                                                viewBox='0 0 24 24'
+                                                fill='none'>
+                                                <path
+                                                    d='M3 20V4C3 3.20435 3.3163 2.44152 3.87891 1.87891C4.44152 1.3163 5.20435 1 6 1H14.5C14.7652 1 15.0195 1.10543 15.207 1.29297L20.707 6.79297C20.8946 6.9805 21 7.23478 21 7.5V20C21 20.7957 20.6837 21.5585 20.1211 22.1211C19.5585 22.6837 18.7957 23 18 23H6C5.20435 23 4.44152 22.6837 3.87891 22.1211C3.3163 21.5585 3 20.7957 3 20ZM16 16C16.5523 16 17 16.4477 17 17C17 17.5523 16.5523 18 16 18H8C7.44772 18 7 17.5523 7 17C7 16.4477 7.44772 16 8 16H16ZM16 12C16.5523 12 17 12.4477 17 13C17 13.5523 16.5523 14 16 14H8C7.44772 14 7 13.5523 7 13C7 12.4477 7.44772 12 8 12H16ZM10 8C10.5523 8 11 8.44772 11 9C11 9.55228 10.5523 10 10 10H8C7.44772 10 7 9.55228 7 9C7 8.44772 7.44772 8 8 8H10ZM15 7H18.0859L15 3.91406V7ZM5 20C5 20.2652 5.10543 20.5195 5.29297 20.707C5.48051 20.8946 5.73478 21 6 21H18C18.2652 21 18.5195 20.8946 18.707 20.707C18.8946 20.5195 19 20.2652 19 20V9H14C13.4477 9 13 8.55228 13 8V3H6C5.73478 3 5.4805 3.10543 5.29297 3.29297C5.10543 3.4805 5 3.73478 5 4V20Z'
+                                                    fill='#454B54'
+                                                />
+                                            </svg>
+
+                                            <div className='upload-file-name-wrapper flex gap-1 items-center'>
+                                                <span className='upload-file-name underline underline-offset-[3px] decoration-[#111c43] text-[#454b54] text-[12px] leading-[16px]'>
+                                                    {formData.oem_certificate.name}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -90,6 +162,7 @@ const Step3 = ({ next, prev }: Props) => {
                                         id='third_party_certificate'
                                         type='file'
                                         name='third_party_certificate'
+                                        onChange={(e) => updateForm("third_party_certificate", e.target.files[0])}
                                     />
                                     <div className='upload-icon bg-[#d7e0f9] rounded-[6px] justify-center items-center w-[40px] h-[40px] transition-colors duration-200 flex'>
                                         <svg
@@ -113,46 +186,53 @@ const Step3 = ({ next, prev }: Props) => {
                                 </div>
                                 <div className='row flex flex-wrap gap-4 w-full'>
                                     <div className='col-6 w-[calc(50%-8px)]'>
-                                        <div className='upload-block-content flex flex-col w-full gap-2.5 '>
-                                            <div className='upload-file-block flex gap-1 items-center'>
-                                                <svg
-                                                    xmlns='http://www.w3.org/2000/svg'
-                                                    width={24}
-                                                    height={24}
-                                                    className='h-5 w-5'
-                                                    viewBox='0 0 24 24'
-                                                    fill='none'>
-                                                    <path
-                                                        d='M3 20V4C3 3.20435 3.3163 2.44152 3.87891 1.87891C4.44152 1.3163 5.20435 1 6 1H14.5C14.7652 1 15.0195 1.10543 15.207 1.29297L20.707 6.79297C20.8946 6.9805 21 7.23478 21 7.5V20C21 20.7957 20.6837 21.5585 20.1211 22.1211C19.5585 22.6837 18.7957 23 18 23H6C5.20435 23 4.44152 22.6837 3.87891 22.1211C3.3163 21.5585 3 20.7957 3 20ZM16 16C16.5523 16 17 16.4477 17 17C17 17.5523 16.5523 18 16 18H8C7.44772 18 7 17.5523 7 17C7 16.4477 7.44772 16 8 16H16ZM16 12C16.5523 12 17 12.4477 17 13C17 13.5523 16.5523 14 16 14H8C7.44772 14 7 13.5523 7 13C7 12.4477 7.44772 12 8 12H16ZM10 8C10.5523 8 11 8.44772 11 9C11 9.55228 10.5523 10 10 10H8C7.44772 10 7 9.55228 7 9C7 8.44772 7.44772 8 8 8H10ZM15 7H18.0859L15 3.91406V7ZM5 20C5 20.2652 5.10543 20.5195 5.29297 20.707C5.48051 20.8946 5.73478 21 6 21H18C18.2652 21 18.5195 20.8946 18.707 20.707C18.8946 20.5195 19 20.2652 19 20V9H14C13.4477 9 13 8.55228 13 8V3H6C5.73478 3 5.4805 3.10543 5.29297 3.29297C5.10543 3.4805 5 3.73478 5 4V20Z'
-                                                        fill='#454B54'
-                                                    />
-                                                </svg>
-                                                <div className='upload-file-name-wrapper flex gap-1 items-center'>
-                                                    <span className='upload-file-name underline underline-offset-[3px] decoration-[#111c43] text-[#454b54] text-[12px] leading-[16px]'>
-                                                        oem-certificate_20260224_105033_FAEE2258.png
-                                                    </span>
-                                                    <div className='actions-btn flex items-center gap-2'>
-                                                        <button className='icon-button delete' type='button'>
-                                                            <span className='icon-circle'>
-                                                                <svg
-                                                                    xmlns='http://www.w3.org/2000/svg'
-                                                                    width={20}
-                                                                    height={20}
-                                                                    viewBox='0 0 20 20'
-                                                                    fill='none'>
-                                                                    <path
-                                                                        fillRule='evenodd'
-                                                                        clipRule='evenodd'
-                                                                        d='M6.71967 6.71967C7.01256 6.42678 7.48744 6.42678 7.78033 6.71967L10 8.93934L12.2197 6.71967C12.5126 6.42678 12.9874 6.42678 13.2803 6.71967C13.5732 7.01256 13.5732 7.48744 13.2803 7.78033L11.0607 10L13.2803 12.2197C13.5732 12.5126 13.5732 12.9874 13.2803 13.2803C12.9874 13.5732 12.5126 13.5732 12.2197 13.2803L10 11.0607L7.78033 13.2803C7.48744 13.5732 7.01256 13.5732 6.71967 13.2803C6.42678 12.9874 6.42678 12.5126 6.71967 12.2197L8.93934 10L6.71967 7.78033C6.42678 7.48744 6.42678 7.01256 6.71967 6.71967Z'
-                                                                        fill='#F56262'
-                                                                    />
-                                                                </svg>
-                                                            </span>
-                                                        </button>
+                                        {formData.third_party_certificate && (
+                                            <div className='upload-block-content flex flex-col w-full gap-2.5 '>
+                                                <div className='upload-file-block flex gap-1 items-center'>
+                                                    <svg
+                                                        xmlns='http://www.w3.org/2000/svg'
+                                                        width={24}
+                                                        height={24}
+                                                        className='h-5 w-5'
+                                                        viewBox='0 0 24 24'
+                                                        fill='none'>
+                                                        <path
+                                                            d='M3 20V4C3 3.20435 3.3163 2.44152 3.87891 1.87891C4.44152 1.3163 5.20435 1 6 1H14.5C14.7652 1 15.0195 1.10543 15.207 1.29297L20.707 6.79297C20.8946 6.9805 21 7.23478 21 7.5V20C21 20.7957 20.6837 21.5585 20.1211 22.1211C19.5585 22.6837 18.7957 23 18 23H6C5.20435 23 4.44152 22.6837 3.87891 22.1211C3.3163 21.5585 3 20.7957 3 20ZM16 16C16.5523 16 17 16.4477 17 17C17 17.5523 16.5523 18 16 18H8C7.44772 18 7 17.5523 7 17C7 16.4477 7.44772 16 8 16H16ZM16 12C16.5523 12 17 12.4477 17 13C17 13.5523 16.5523 14 16 14H8C7.44772 14 7 13.5523 7 13C7 12.4477 7.44772 12 8 12H16ZM10 8C10.5523 8 11 8.44772 11 9C11 9.55228 10.5523 10 10 10H8C7.44772 10 7 9.55228 7 9C7 8.44772 7.44772 8 8 8H10ZM15 7H18.0859L15 3.91406V7ZM5 20C5 20.2652 5.10543 20.5195 5.29297 20.707C5.48051 20.8946 5.73478 21 6 21H18C18.2652 21 18.5195 20.8946 18.707 20.707C18.8946 20.5195 19 20.2652 19 20V9H14C13.4477 9 13 8.55228 13 8V3H6C5.73478 3 5.4805 3.10543 5.29297 3.29297C5.10543 3.4805 5 3.73478 5 4V20Z'
+                                                            fill='#454B54'
+                                                        />
+                                                    </svg>
+                                                    <div className='upload-file-name-wrapper flex gap-1 items-center'>
+                                                        <span className='upload-file-name underline underline-offset-[3px] decoration-[#111c43] text-[#454b54] text-[12px] leading-[16px]'>
+                                                            {formData.third_party_certificate.name}
+                                                        </span>
+                                                        <div className='actions-btn flex items-center gap-2'>
+                                                            <button
+                                                                className='icon-button delete cursor-pointer'
+                                                                type='button'
+                                                                onClick={() =>
+                                                                    updateForm("third_party_certificate", "")
+                                                                }>
+                                                                <span className='icon-circle'>
+                                                                    <svg
+                                                                        xmlns='http://www.w3.org/2000/svg'
+                                                                        width={20}
+                                                                        height={20}
+                                                                        viewBox='0 0 20 20'
+                                                                        fill='none'>
+                                                                        <path
+                                                                            fillRule='evenodd'
+                                                                            clipRule='evenodd'
+                                                                            d='M6.71967 6.71967C7.01256 6.42678 7.48744 6.42678 7.78033 6.71967L10 8.93934L12.2197 6.71967C12.5126 6.42678 12.9874 6.42678 13.2803 6.71967C13.5732 7.01256 13.5732 7.48744 13.2803 7.78033L11.0607 10L13.2803 12.2197C13.5732 12.5126 13.5732 12.9874 13.2803 13.2803C12.9874 13.5732 12.5126 13.5732 12.2197 13.2803L10 11.0607L7.78033 13.2803C7.48744 13.5732 7.01256 13.5732 6.71967 13.2803C6.42678 12.9874 6.42678 12.5126 6.71967 12.2197L8.93934 10L6.71967 7.78033C6.42678 7.48744 6.42678 7.01256 6.71967 6.71967Z'
+                                                                            fill='#F56262'
+                                                                        />
+                                                                    </svg>
+                                                                </span>
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        )}
                                     </div>
                                     <div className='col-6 w-[calc(50%-8px)]'>
                                         <div className='input-date-wrapper row flex justify-end gap-4 w-full flex-wrap'>
@@ -163,8 +243,12 @@ const Step3 = ({ next, prev }: Props) => {
                                                             id='third_party_start_date'
                                                             className='form-input text-[#17181a] box-border bg-[#f5f6fa] border border-[#efefef] rounded-[10px] w-full h-[44px] pt-[18px] px-[14px] pb-[8px] font-sans text-[14px] font-medium'
                                                             type='date'
-                                                            defaultValue='2026-03-10'
+                                                            // defaultValue='2026-03-10'
+                                                            value={formData.third_party_start_date}
                                                             name='third_party_start_date'
+                                                            onChange={(e) =>
+                                                                updateForm("third_party_start_date", e.target.value)
+                                                            }
                                                         />
                                                         <label
                                                             htmlFor='third_party_start_date'
@@ -180,13 +264,15 @@ const Step3 = ({ next, prev }: Props) => {
                                                         <select
                                                             id='days'
                                                             name='days'
+                                                            // onChange={(e) => setSelectOption(e.target.value)}
+                                                            onChange={handleSelectChange}
                                                             className='form-select text-[#17181a] box-border bg-[#f5f6fa] border border-[#efefef] rounded-[10px] w-full h-[44px] pt-[18px] px-[14px] pb-[8px] font-sans text-[14px] font-medium'>
                                                             <option value=''>Select Frequency</option>
                                                             <option value={1}>1 Month</option>
                                                             <option value={3}>3 Months</option>
                                                             <option value={6}>6 Months</option>
                                                             <option value={12}>12 Months</option>
-                                                            <option value='custom'>Custom</option>
+                                                            <option value={SELECT_TRIGGER}>Custom</option>
                                                         </select>
                                                         <label
                                                             htmlFor='days'
@@ -200,12 +286,16 @@ const Step3 = ({ next, prev }: Props) => {
                                                 <div className='form-group flex flex-col gap-2'>
                                                     <div className='fancy-input end-date relative'>
                                                         <input
+                                                            disabled={selectOption !== SELECT_TRIGGER}
                                                             id='third_party_expiry_date'
                                                             className='form-input text-[#17181a] box-border bg-[#f5f6fa] border border-[#efefef] rounded-[10px] w-full h-[44px] pt-[18px] px-[14px] pb-[8px] font-sans text-[14px] font-medium'
                                                             min='2026-03-12'
                                                             type='date'
-                                                            defaultValue='2026-09-10'
+                                                            value={formData.third_party_expiry_date}
                                                             name='third_party_expiry_date'
+                                                            onChange={(e) =>
+                                                                updateForm("third_party_expiry_date", e.target.value)
+                                                            }
                                                         />
                                                         <label
                                                             htmlFor='third_party_expiry_date'
@@ -244,6 +334,7 @@ const Step3 = ({ next, prev }: Props) => {
                             <button
                                 // onClick={handleSubmit}
                                 type='submit'
+                                onClick={handleSave}
                                 className='btn continue py-2.5 pr-3 pl-3.5 ml-auto all-unset cursor-pointer text-center bg-[#263f94] border border-[#263f94] text-white box-border rounded-[40px] justify-center items-center gap-[6px] h-[38px] px-[14px] py-[10px] text-[14px] font-500 transition-all duration-200 inline-flex'>
                                 Continue
                                 <svg

@@ -228,6 +228,8 @@ export const updateTag = async function (id: number, prevState: any, formData: a
 export const checkTagAssigned = async function (uid: string): Promise<{ success: boolean; message?: string; data?: any }> {
     "use server";
 
+    // console.log()
+
     const sessionId = await getCompanySessionId();
     const companyData = await getComapnyData();
     const companyId = companyData?.company_id;
@@ -244,6 +246,8 @@ export const checkTagAssigned = async function (uid: string): Promise<{ success:
         });
 
         const result = await response.json();
+
+        // console.log(result)
 
         if (result.has_error) {
             // asset already assigned to the tag
@@ -268,7 +272,7 @@ export const checkTagAssigned = async function (uid: string): Promise<{ success:
             return {
                 success: true,
                 message: result.message,
-                data: result.tag
+                data: result.tag.id
             }
         }
     } else {

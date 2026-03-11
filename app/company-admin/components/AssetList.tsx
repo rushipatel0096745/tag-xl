@@ -67,24 +67,28 @@ const AssetList = ({ assets }: AssetProps) => {
                             <tbody className='table-row-group align-middle '>
                                 {assets?.map((asset) => {
                                     return (
-                                        <tr className='table-row border-1 border-solid border-[#f5f6f1] align-middle' key={asset.id}>
-                                            <td className='text-[13px] font-medium text-[#474a54]'>{asset.id}</td>
-                                            <td className='text-[13px] font-medium text-[#474a54]'>{asset.tag.uid}</td>
-                                            <td className='text-[13px] font-medium text-[#474a54]'>{asset.name}</td>
-                                            <td className='text-[13px] font-medium text-[#474a54]'>
+                                        <tr
+                                            className='table-row border-1 border-solid border-[#f5f6f1] align-middle'
+                                            key={asset.id}>
+                                            <td className='text-[13px] p-2 font-medium text-[#474a54]'>{asset.id}</td>
+                                            <td className='text-[13px] p-2 font-medium text-[#474a54]'>
+                                                {asset.tag.uid}
+                                            </td>
+                                            <td className='text-[13px] p-2 font-medium text-[#474a54]'>{asset.name}</td>
+                                            <td className='text-[13px] p-2 font-medium text-[#474a54]'>
                                                 {asset.tag.tag_type}
                                             </td>
-                                            <td className='text-[13px] font-medium text-[#474a54]'>
+                                            <td className='text-[13px] p-2 font-medium text-[#474a54]'>
                                                 {asset.batch_code}
                                             </td>
-                                            <td className='text-[13px] font-medium text-[#474a54]'>
+                                            <td className='text-[13px] p-2 font-medium text-[#474a54]'>
                                                 {asset.status == 1 && (
-                                                    <span className='status processing text-[#f5a623] bg-[#fff7e6] border border-solid rounded-[40px] uppercase px-[2px] py-2.5 text-[10px] inline font-extrabold tracking-[0.5px] '>
+                                                    <span className='status processing text-[#f5a623] bg-[#fff7e6] border border-solid rounded-[40px] uppercase py-[2px] px-2.5 text-[10px] inline-block font-extrabold tracking-[0.5px] '>
                                                         WARNING
                                                     </span>
                                                 )}
                                             </td>
-                                            <td>
+                                            <td className='p-2'>
                                                 <div className='actions-btn flex gap-2 items-center'>
                                                     <div className='actions-btn flex gap-2 items-center'>
                                                         <Link
@@ -129,8 +133,6 @@ const AssetList = ({ assets }: AssetProps) => {
                                         </tr>
                                     );
                                 })}
-
-                               
                             </tbody>
                         </table>
                     </div>

@@ -10,9 +10,22 @@ interface TagItem {
 
 interface Props {
     next: () => void;
+    updateForm: (name: string, value: any) => void;
+    validate: () => boolean;
+    errors: any;
+    formData: any;
 }
 
-const Step1 = ({ next }: Props) => {
+interface Tag {
+    id: number;
+    uid: string;
+    tag_type: string;
+    is_assigned: boolean;
+    created_at: string;
+    updated_at: any;
+}
+
+const Step1 = ({ next, updateForm, validate, errors, formData }: Props) => {
     const initialList: TagItem = {
         tag_type: "",
         uid: "",
@@ -23,27 +36,36 @@ const Step1 = ({ next }: Props) => {
 
     const [assignError, setAssignError] = useState("");
 
-    const [error, setError] = useState<string | undefined>("");
+    const [tagData, setTagData] = useState<Tag>();
+
+    const [tagId, setTagId] = useState<number>();
+
+    // const [error, setError] = useState<string | undefined>("");
 
     const handleUidChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setError("");
+        // setError("");
         const { value } = event.target;
         setTagList({ ...tagList, uid: value });
     };
 
     const handleTagTypeSelect = (type: TagType) => {
-        setError("");
+        // setError("");
         setTagList({ ...tagList, tag_type: type });
     };
 
     const handleSave = async () => {
-        if (tagList.tag_type === "" || tagList.uid === "") {
-            // console.log("form data", tagList);
-            setError("Please fill required fields");
+        // if (tagList.tag_type === "" || tagList.uid === "") {
+        //     // console.log("form data", tagList);
+        //     setError("Please fill required fields");
+        //     return;
+        // }
+
+        const flag = validate();
+        if (!flag) {
             return;
         }
 
-        const checkAssigned = await checkTagAssigned(tagList.uid);
+        const checkAssigned = await checkTagAssigned(formData.uid);
 
         if (!checkAssigned?.success) {
             setAssignError(checkAssigned?.message || "");
@@ -51,15 +73,25 @@ const Step1 = ({ next }: Props) => {
         }
 
         if (checkAssigned?.success) {
-            console.log("form data", tagList);
             setTagList(initialList);
+            
+            // tag is created but not assigned to any asset
+            if (checkAssigned?.data) {
+                setTagData(checkAssigned.data);
+                setTagId(checkAssigned.data);
+                // console.log("tag id: ", tagId)
+                updateForm("tag_id", checkAssigned.data);
+                console.log("form data", formData);
+                next();
+                return;
+            }
 
             // create the new tag as it is not assigned with any assets
 
-            setShowMsg("Tag created successfully");
-            setError("");
-            setAssignError("");
-            next();
+            // setShowMsg("Tag created successfully");
+            // // setError("");
+            // setAssignError("");
+            // next();
         }
     };
 
@@ -77,12 +109,17 @@ const Step1 = ({ next }: Props) => {
                     </div>
                 )}
 
-                {error && (
+                {errors.tag_type && (
                     <div className='text-red-600'>
-                        <p>{error}</p>
+                        <p>{errors.tag_type}</p>
                     </div>
                 )}
 
+                {/* {errors.tag_id && (
+                    <div className='text-red-600'>
+                        <p>{errors.tag_id}</p>
+                    </div>
+                )} */}
                 <div className='block'>
                     <div className='add-one-by-one_content'>
                         <h4 className='title h4 mb-5 text-[16px] font-semibold leading-5.5'>Select Tag</h4>
@@ -94,10 +131,11 @@ const Step1 = ({ next }: Props) => {
                                         <button
                                             key={option.value}
                                             type='button'
-                                            onClick={() => handleTagTypeSelect(option.value)}
+                                            // onClick={() => handleTagTypeSelect(option.value)}
+                                            onClick={() => updateForm("tag_type", option.value)}
                                             className={`btn min-w-25 cursor-pointer text-center rounded-4xl justify-center items-center gap-[6px] h-[38px] px-[10px] py-[14px] text-[14px] font-medium inline-flex border border-solid transition-all duration-150
                                                 ${
-                                                    tagList.tag_type === option.value
+                                                    formData.tag_type === option.value
                                                         ? "bg-[#263f94] border-[#263f94] text-white"
                                                         : "bg-[#f5f6fa] border-[#c9d5ff] text-[#111c43]"
                                                 }`}>
@@ -111,14 +149,20 @@ const Step1 = ({ next }: Props) => {
                                     <input
                                         placeholder=''
                                         type='text'
-                                        value={tagList.uid}
+                                        value={formData.uid}
                                         name='uid'
                                         className='text-[#17181a] bg-[#f5f6fa] border border-solid border-[#efefef] rounded-[10px] w-full h-11 text-[14px] font-medium pt-[18px] px-[14px] pb-[8px]'
-                                        onChange={(event) => handleUidChange(event)}
+                                        // onChange={(event) => handleUidChange(event)}
+                                        onChange={(e) => updateForm("uid", e.target.value)}
                                     />
                                     <label className='form-label absolute left-3 px-0 py-0.5 text-[#676767] top-1 text-[11px] pointer-events-none'>
                                         UID<span className='text-red-500'>*</span>
                                     </label>
+                                    {errors.uid && (
+                                        <div className='text-red-600'>
+                                            <p> {errors.uid}</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

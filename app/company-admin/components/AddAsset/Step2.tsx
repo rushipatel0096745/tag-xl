@@ -6,6 +6,10 @@ import { useForm } from "react-hook-form";
 interface Props {
     next: () => void;
     prev: () => void;
+    updateForm: (name: string, value: any | null) => void;
+    validate: () => boolean;
+    errors: any;
+    formData: any;
 }
 
 const initialFormValues = {
@@ -14,37 +18,37 @@ const initialFormValues = {
     batch_code: "",
 };
 
-const Step2 = ({ next, prev }: Props) => {
+const Step2 = ({ next, prev, updateForm, validate, errors, formData }: Props) => {
     const [loactions, setLocations] = useState<Location[]>([]);
 
-    const [formData, setFormData] = useState(initialFormValues);
+    // const [formData, setFormData] = useState(initialFormValues);
 
-    const [errors, setErrors] = useState(initialFormValues);
+    // const [errors, setErrors] = useState(initialFormValues);
 
     const [image, setImage] = useState(null);
 
-    function validate() {
-        let newErrors = {} as any;
-        if (!formData.name) newErrors.name = "Asset name is required";
-        if (!formData.location_id) newErrors.location_id = "Location is required";
-        if (!formData.batch_code) newErrors.batch_code = "Batch code required";
+    // function validate() {
+    //     let newErrors = {} as any;
+    //     if (!formData.name) newErrors.name = "Asset name is required";
+    //     if (!formData.location_id) newErrors.location_id = "Location is required";
+    //     if (!formData.batch_code) newErrors.batch_code = "Batch code required";
 
-        setErrors(newErrors);
+    //     setErrors(newErrors);
 
-        return Object.keys(newErrors).length === 0;
-    }
+    //     return Object.keys(newErrors).length === 0;
+    // }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData((prevValues) => ({
-            ...prevValues,
-            [name]: value,
-        }));
-    };
+    // const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    //     const { name, value } = e.target;
+    //     setFormData((prevValues) => ({
+    //         ...prevValues,
+    //         [name]: value,
+    //     }));
+    // };
 
-    const handleFileChange = (e) => {
-        setImage(e.target.files[0]);
-    };
+    // const handleFileChange = (e) => {
+    //     setImage(e.target.files[0]);
+    // };
 
     const handleSubmit = (e) => {
         e.preventDefault(); // Prevents the default page refresh
@@ -52,6 +56,7 @@ const Step2 = ({ next, prev }: Props) => {
         console.log("image: ", image);
 
         const flag = validate();
+        console.log(flag);
 
         if (!flag) {
             return;
@@ -89,7 +94,7 @@ const Step2 = ({ next, prev }: Props) => {
                                     type='text'
                                     name='name'
                                     value={formData.name}
-                                    onChange={handleChange}
+                                    onChange={(e) => updateForm("name", e.target.value)}
                                 />
                                 <label
                                     htmlFor='name'
@@ -105,7 +110,7 @@ const Step2 = ({ next, prev }: Props) => {
                                     name='location_id'
                                     id='location_id'
                                     value={Number(formData.location_id)}
-                                    onChange={handleChange}
+                                    onChange={(e) => updateForm("location_id", e.target.value)}
                                     className='form-select box-border text-[#17181a] bg-[#f5f6fa] border border-solid border-[#efefef] rounded-[10px] w-full h-11 pt-[18px] px-[14px] pb-2 text-[14px] font-medium'>
                                     <option value=''>Select Location</option>
                                     {loactions.map((location) => (
@@ -135,7 +140,7 @@ const Step2 = ({ next, prev }: Props) => {
                                     type='text'
                                     name='batch_code'
                                     value={formData.batch_code}
-                                    onChange={handleChange}
+                                    onChange={(e) => updateForm("batch_code", e.target.value)}
                                 />
                                 <label
                                     htmlFor='batch_code'
@@ -155,7 +160,7 @@ const Step2 = ({ next, prev }: Props) => {
                                             id='image'
                                             type='file'
                                             name='image'
-                                            onChange={handleFileChange}
+                                            onChange={(e) => updateForm("image", e.target.files[0])}
                                         />
                                         <div className='upload-icon bg-[#f5f6fa] rounded-[6px] justify-center items-center w-[40px] h-[40px] transition-colors duration-200 flex'>
                                             <svg
